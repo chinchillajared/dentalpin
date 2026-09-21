@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Follow-up: single error toast on the procurement pages — the
+  composable passes `errorToast: false` on every call the pages
+  already surface themselves (`listSuppliers`/`listInventoryItems`
+  keep useApi's toast: the picker loaders have no catch).
 - feat(#232): sidebar entries grouped under the Inventory header (`nav.section` "inventory").
 - feat(i18n): full locale set for the shared procurement frontend
   (fr, de, pl, it, ta, hu, ar, pt alongside en/es).

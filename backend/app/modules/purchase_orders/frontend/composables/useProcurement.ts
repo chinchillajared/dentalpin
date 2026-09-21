@@ -184,6 +184,10 @@ export function useProcurement() {
   const api = useApi()
 
   // --- suppliers -------------------------------------------------------
+  // Note: every call below passes `errorToast: false` EXCEPT
+  // `listSuppliers` and `listInventoryItems` — the pages toast their own
+  // failures, but the option-picker loaders (`loadOptions`) have no
+  // catch, so those two keep useApi's toast as their only surface.
   async function listSuppliers(params: SupplierListParams = {}): Promise<PaginatedResponse<ProcurementSupplier>> {
     return api.get<PaginatedResponse<ProcurementSupplier>>('/api/v1/suppliers', {
       query: {
@@ -197,15 +201,15 @@ export function useProcurement() {
   }
 
   async function createSupplier(payload: SupplierCreatePayload): Promise<ApiResponse<ProcurementSupplier>> {
-    return api.post<ApiResponse<ProcurementSupplier>>('/api/v1/suppliers', payload)
+    return api.post<ApiResponse<ProcurementSupplier>>('/api/v1/suppliers', payload, { errorToast: false })
   }
 
   async function updateSupplier(id: string, payload: SupplierUpdatePayload): Promise<ApiResponse<ProcurementSupplier>> {
-    return api.patch<ApiResponse<ProcurementSupplier>>(`/api/v1/suppliers/${id}`, payload)
+    return api.patch<ApiResponse<ProcurementSupplier>>(`/api/v1/suppliers/${id}`, payload, { errorToast: false })
   }
 
   async function deleteSupplier(id: string): Promise<void> {
-    await api.del<null>(`/api/v1/suppliers/${id}`)
+    await api.del<null>(`/api/v1/suppliers/${id}`, { errorToast: false })
   }
 
   // --- supplier <-> item links ------------------------------------------
@@ -216,16 +220,17 @@ export function useProcurement() {
         inventory_item_id: defined(params.inventory_item_id),
         page: params.page,
         page_size: params.page_size
-      }
+      },
+      errorToast: false
     })
   }
 
   async function createSupplierItemLink(payload: SupplierItemLinkCreate): Promise<ApiResponse<SupplierItemLink>> {
-    return api.post<ApiResponse<SupplierItemLink>>('/api/v1/supplier_items', payload)
+    return api.post<ApiResponse<SupplierItemLink>>('/api/v1/supplier_items', payload, { errorToast: false })
   }
 
   async function deleteSupplierItemLink(id: string): Promise<void> {
-    await api.del<null>(`/api/v1/supplier_items/${id}`)
+    await api.del<null>(`/api/v1/supplier_items/${id}`, { errorToast: false })
   }
 
   // --- purchase orders ---------------------------------------------------
@@ -236,24 +241,25 @@ export function useProcurement() {
         supplier_id: defined(params.supplier_id),
         page: params.page,
         page_size: params.page_size
-      }
+      },
+      errorToast: false
     })
   }
 
   async function getPurchaseOrder(id: string): Promise<ApiResponse<PurchaseOrder>> {
-    return api.get<ApiResponse<PurchaseOrder>>(`/api/v1/purchase_orders/${id}`)
+    return api.get<ApiResponse<PurchaseOrder>>(`/api/v1/purchase_orders/${id}`, { errorToast: false })
   }
 
   async function createPurchaseOrder(payload: PurchaseOrderCreatePayload): Promise<ApiResponse<PurchaseOrder>> {
-    return api.post<ApiResponse<PurchaseOrder>>('/api/v1/purchase_orders', payload)
+    return api.post<ApiResponse<PurchaseOrder>>('/api/v1/purchase_orders', payload, { errorToast: false })
   }
 
   async function transitionPurchaseOrder(id: string, status: string): Promise<ApiResponse<PurchaseOrder>> {
-    return api.post<ApiResponse<PurchaseOrder>>(`/api/v1/purchase_orders/${id}/status`, { status })
+    return api.post<ApiResponse<PurchaseOrder>>(`/api/v1/purchase_orders/${id}/status`, { status }, { errorToast: false })
   }
 
   async function receivePurchaseOrder(id: string, lines: ReceiptLineInput[]): Promise<ApiResponse<PurchaseOrder>> {
-    return api.post<ApiResponse<PurchaseOrder>>(`/api/v1/purchase_orders/${id}/receive`, { lines })
+    return api.post<ApiResponse<PurchaseOrder>>(`/api/v1/purchase_orders/${id}/receive`, { lines }, { errorToast: false })
   }
 
   async function downloadPurchaseOrderPdf(id: string, locale = 'es'): Promise<void> {
@@ -280,30 +286,31 @@ export function useProcurement() {
 
   // --- reorder ------------------------------------------------------------
   async function listReorderSuggestions(): Promise<ApiResponse<ReorderSuggestion[]>> {
-    return api.get<ApiResponse<ReorderSuggestion[]>>('/api/v1/inventory_reorder/suggestions')
+    return api.get<ApiResponse<ReorderSuggestion[]>>('/api/v1/inventory_reorder/suggestions', { errorToast: false })
   }
 
   async function generateReorderOrders(itemIds: string[]): Promise<ApiResponse<PurchaseOrder[]>> {
-    return api.post<ApiResponse<PurchaseOrder[]>>('/api/v1/inventory_reorder/orders', { item_ids: itemIds })
+    return api.post<ApiResponse<PurchaseOrder[]>>('/api/v1/inventory_reorder/orders', { item_ids: itemIds }, { errorToast: false })
   }
 
   // --- ratings -------------------------------------------------------------
   async function listSupplierRatings(params: { page?: number, page_size?: number } = {}): Promise<PaginatedResponse<SupplierRating>> {
     return api.get<PaginatedResponse<SupplierRating>>('/api/v1/supplier_ratings', {
-      query: { page: params.page, page_size: params.page_size }
+      query: { page: params.page, page_size: params.page_size },
+      errorToast: false
     })
   }
 
   async function createSupplierReview(payload: { supplier_id: string, score: number, comment?: string | null }): Promise<ApiResponse<SupplierReview>> {
-    return api.post<ApiResponse<SupplierReview>>('/api/v1/supplier_ratings/reviews', payload)
+    return api.post<ApiResponse<SupplierReview>>('/api/v1/supplier_ratings/reviews', payload, { errorToast: false })
   }
 
   async function updateSupplierReview(id: string, payload: { score: number, comment?: string | null }): Promise<ApiResponse<SupplierReview>> {
-    return api.patch<ApiResponse<SupplierReview>>(`/api/v1/supplier_ratings/reviews/${id}`, payload)
+    return api.patch<ApiResponse<SupplierReview>>(`/api/v1/supplier_ratings/reviews/${id}`, payload, { errorToast: false })
   }
 
   async function deleteSupplierReview(id: string): Promise<void> {
-    await api.del<null>(`/api/v1/supplier_ratings/reviews/${id}`)
+    await api.del<null>(`/api/v1/supplier_ratings/reviews/${id}`, { errorToast: false })
   }
 
   // --- inventory lookup (for link/order line pickers) --------------------
