@@ -184,10 +184,9 @@ export function useProcurement() {
   const api = useApi()
 
   // --- suppliers -------------------------------------------------------
-  // Note: every call below passes `errorToast: false` EXCEPT
-  // `listSuppliers` and `listInventoryItems` — the pages toast their own
-  // failures, but the option-picker loaders (`loadOptions`) have no
-  // catch, so those two keep useApi's toast as their only surface.
+  // Note: every call below passes `errorToast: false` — the pages toast
+  // their own failures, including the option-picker loaders
+  // (`loadOptions`), which catch and toast instead of swallowing.
   async function listSuppliers(params: SupplierListParams = {}): Promise<PaginatedResponse<ProcurementSupplier>> {
     return api.get<PaginatedResponse<ProcurementSupplier>>('/api/v1/suppliers', {
       query: {
@@ -196,7 +195,8 @@ export function useProcurement() {
         include_inactive: params.include_inactive,
         page: params.page,
         page_size: params.page_size
-      }
+      },
+      errorToast: false
     })
   }
 
@@ -316,7 +316,8 @@ export function useProcurement() {
   // --- inventory lookup (for link/order line pickers) --------------------
   async function listInventoryItems(params: { page?: number, page_size?: number } = {}): Promise<PaginatedResponse<InventoryItem>> {
     return api.get<PaginatedResponse<InventoryItem>>('/api/v1/inventory/', {
-      query: { page: params.page, page_size: params.page_size }
+      query: { page: params.page, page_size: params.page_size },
+      errorToast: false
     })
   }
 
