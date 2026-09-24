@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Follow-up: `AttendanceService.clock()` requires `created_by` (keyword-only)
+  and the `clocked` payload no longer carries a null branch (review nit on #501).
 - Follow-up: fold `satt_0002_created_by` back into `satt_0001`
   (`created_by` NOT NULL from the start — single-release module);
   dev DBs that applied `satt_0002` must re-stamp the branch.
