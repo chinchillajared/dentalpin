@@ -21,7 +21,8 @@ const options = [
   { value: 'de', label: 'Deutsch' },
   { value: 'hu', label: 'Magyar' },
   { value: 'pl', label: 'Polski' },
-  { value: 'it', label: 'Italiano' },  { value: 'ar', label: 'العربية' }
+  { value: 'it', label: 'Italiano' },
+  { value: 'ar', label: 'العربية' }
 ]
 
 async function save() {
